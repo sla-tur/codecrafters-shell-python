@@ -2,7 +2,7 @@ import sys
 
 def main():
     # Uncomment this block to pass the first stage
-    commands = {"exit", "echo"}
+    commands = {"exit", "echo", "type"}
     
     while True:
         sys.stdout.write("$ ")
