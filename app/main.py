@@ -18,6 +18,11 @@ def main():
                         exit()
                     case ["echo", *pos_args]:
                         print(*pos_args)
+                    case ["type", command]:
+                        if command in commands:
+                            print(f"{command} is a shell builtin")
+                        else:
+                            print(f"{command}: command not found")
                     case _:
                         print(f"{cmd}: command not found")
         except:
