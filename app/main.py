@@ -38,8 +38,8 @@ def main():
                 paths = PATH.split(os.pathsep)
                 command_path = None
                 for path in paths:
-                    if os.path.isfile(f"{path}/{cmd}"):
-                        command_path = f"{path}/{cmd}"
+                    if os.path.isfile(f"{path}/{args[0]}"):
+                        command_path = f"{path}/{args[0]}"
                 if command_path:
                     print(subprocess.run(args, env=PATH, capture_output=True,
                                          text=True).stdout)
