@@ -44,7 +44,7 @@ def main():
                     print(subprocess.run(args, env=PATH, capture_output=True,
                                          text=True).stdout)
                 else:
-                    sys.stdout.write(f"{command}: not found\n")
+                    sys.stdout.write(f"{args[0]}: not found\n")
 
 if __name__ == "__main__":
     main()
