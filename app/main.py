@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 
 def main():
     # Uncomment this block to pass the first stage
@@ -21,7 +22,7 @@ def main():
                 #
                 print(*pos_args)
             case ["type", command]:
-                paths = PATH.split(":")
+                paths = PATH.split(os.pathsep)
                 command_path = None
                 for path in paths:
                     if os.path.isfile(f"{path}/{command}"):
@@ -34,7 +35,16 @@ def main():
                     sys.stdout.write(f"{command}: not found\n")
                 sys.stdout.flush()
             case _:
-                print(f"{cmd}: command not found")
+                paths = PATH.split(os.pathsep)
+                command_path = None
+                for path in paths:
+                    if os.path.isfile(f"{path}/{cmd}"):
+                        command_path = f"{path}/{cmd}"
+                if command_path:
+                    print(subprocess.run(args, env=PATH, capture_output=True,
+                                         text=True).stdout)
+                else:
+                    sys.stdout.write(f"{command}: not found\n")
 
 if __name__ == "__main__":
     main()
