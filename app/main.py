@@ -45,6 +45,7 @@ def main():
                                          text=True).stdout)
                 else:
                     sys.stdout.write(f"{args[0]}: not found\n")
+                sys.stdout.flush()
 
 if __name__ == "__main__":
     main()
