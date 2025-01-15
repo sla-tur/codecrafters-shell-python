@@ -3,6 +3,7 @@ import os
 
 def main():
     # Uncomment this block to pass the first stage
+    PATH = os.environ.get("PATH")
     commands = {"exit", "echo", "type"}
     
     while True:
@@ -17,12 +18,20 @@ def main():
             case ["exit", "0"]:
                 exit()
             case ["echo", *pos_args]:
-                print(*pos_args)
+                sys.stdout.write(*pos_args + "\n")
             case ["type", command]:
+                paths = PATH.split(":")
+                command_path = None
+                for path in paths:
+                    if os.path.isfile(f"{path}/{command}"):
+                        command_path = f"{path}/{command}"
                 if command in commands:
-                    print(f"{command} is a shell builtin")
+                    sys.stdout.write(f"{command} is a shell builtin\n")
+                elif command_path:
+                    sys.stdout.write(f"{command} is {command_path}\n")
                 else:
-                    print(f"{command}: not found")
+                    sys.stdout.write(f"{command}: not found\n")
+                sys.stdout.flush()
             case _:
                 print(f"{cmd}: command not found")
 
