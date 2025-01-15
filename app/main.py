@@ -41,7 +41,7 @@ def main():
                     if os.path.isfile(f"{path}/{args[0]}"):
                         command_path = f"{path}/{args[0]}"
                 if command_path:
-                    print(subprocess.run(args, env=PATH, capture_output=True,
+                    print(subprocess.run(args, capture_output=True,
                                          text=True).stdout)
                 else:
                     sys.stdout.write(f"{args[0]}: not found\n")
