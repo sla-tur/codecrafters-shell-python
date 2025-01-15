@@ -18,8 +18,8 @@ def main():
             case ["exit", "0"]:
                 exit()
             case ["echo", *pos_args]:
-                sys.stdout.write(" ".join(*pos_args))
-                sys.stdout.write('\n')  
+                #
+                print(*pos_args)
             case ["type", command]:
                 paths = PATH.split(":")
                 command_path = None
