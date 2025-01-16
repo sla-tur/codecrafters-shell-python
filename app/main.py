@@ -32,34 +32,55 @@ def main():
         cmd = sys.stdin.readline().rstrip()
         # split input into distinct arguments using shlex
         args = shlex.split(cmd)
-        match args:
-            # the exit command defaults to a 0 code
-            case ["exit", "0"]:
-                sys.exit(int(args[1]) if len(args) > 1 else 0)
-            case ["echo", *pos_args]:
-                echo(pos_args)
-            case ["type", command]:
-                type(command)
-            case ["pwd"]:
-                sys.stdout.write(f"{os.getcwd()}\n")
+        original_stdout = sys.stdout  # Save the original stdout
+        if len(args) > 2 and (args[-2] == "2>" or args[-2] == ">>"):
+            try:
+                sys.stderr = open(args[-1], "w")  # Redirect stderr to file
+                args = args[:-2]  # Remove the redirection part from args
+            except Exception as e:
+                sys.stderr = original_stdout
+        if len(args) > 2 and (args[-2] == "1>" or args[-2] == ">"):
+            try:
+                sys.stdout = open(args[-1], "w")  # Redirect stdout to file
+                args = args[:-2]  # Remove the redirection part from args
+            except Exception as e:
+                sys.stdout = original_stdout  # Restore original stdout
+                sys.stdout.write(f"Error: {e}\n")
                 sys.stdout.flush()
-            case ["cd", path]:
-                try:
-                    os.chdir(os.path.expanduser(path))
-                except FileNotFoundError:
-                    sys.stdout.write(f"cd: {path}: No such file or directory\n")
+                continue
+        try:
+            match args:
+                # the exit command defaults to a 0 code
+                case ["exit", "0"]:
+                    sys.exit(int(args[1]) if len(args) > 1 else 0)
+                case ["echo", *pos_args]:
+                    echo(pos_args)
+                case ["type", command]:
+                    type(command)
+                case ["pwd"]:
+                    sys.stdout.write(f"{os.getcwd()}\n")
                     sys.stdout.flush()
-            case _:
-                paths = PATH.split(os.pathsep)
-                command_path = None
-                for path in paths:
-                    if os.path.isfile(f"{path}/{args[0]}"):
-                        command_path = f"{path}/{args[0]}"
-                if command_path:
-                    subprocess.run(args)
-                else:
-                    sys.stdout.write(f"{args[0]}: not found\n")
-                sys.stdout.flush()
+                case ["cd", path]:
+                    try:
+                        os.chdir(os.path.expanduser(path))
+                    except FileNotFoundError:
+                        sys.stdout.write(f"cd: {path}: No such file or directory\n")
+                        sys.stdout.flush()
+                case _:
+                    paths = PATH.split(os.pathsep)
+                    command_path = None
+                    for path in paths:
+                        if os.path.isfile(f"{path}/{args[0]}"):
+                            command_path = f"{path}/{args[0]}"
+                    if command_path:
+                        subprocess.run(args)
+                    else:
+                        sys.stdout.write(f"{args[0]}: not found\n")
+                    sys.stdout.flush()
+        finally:
+            if sys.stdout != original_stdout:
+                sys.stdout.close()  # Close the file if stdout was redirected
+            sys.stdout = original_stdout  # Restore original stdout
 
 if __name__ == "__main__":
     main()
