@@ -73,7 +73,7 @@ def main():
                         if os.path.isfile(f"{path}/{args[0]}"):
                             command_path = f"{path}/{args[0]}"
                     if command_path:
-                        subprocess.run(args)
+                        subprocess.run(args, stdout=sys.stdout)  # Use redirected stdout
                     else:
                         sys.stdout.write(f"{args[0]}: not found\n")
                     sys.stdout.flush()
