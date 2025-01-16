@@ -42,7 +42,11 @@ def main():
                 sys.stdout.write(f"{os.getcwd()}\n")
                 sys.stdout.flush()
             case ["cd", path]:
-                os.chdir(path)
+                try:
+                    os.chdir(path)
+                except FileNotFoundError:
+                    sys.stdout.write(f"cd: {path}: No such file or directory\n")
+                    sys.stdout.flush()
             case _:
                 paths = PATH.split(os.pathsep)
                 command_path = None
