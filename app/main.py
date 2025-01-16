@@ -4,7 +4,7 @@ import subprocess
 
 PATH = os.environ.get("PATH")
 paths = PATH.split(os.pathsep)
-commands = {"exit", "echo", "type"}
+commands = {"exit", "echo", "type", "pwd"}
 
 def echo(*args):
     print(*args)
@@ -38,6 +38,9 @@ def main():
                 echo(*pos_args)
             case ["type", command]:
                 type(command)
+            case ["pwd"]:
+                sys.stdout.write(f"{os.getcwd()}\n")
+                sys.stdout.flush()
             case _:
                 paths = PATH.split(os.pathsep)
                 command_path = None
