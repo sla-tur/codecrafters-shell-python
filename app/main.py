@@ -1,13 +1,15 @@
 import sys
 import os
+import shlex
 import subprocess
 
 PATH = os.environ.get("PATH")
 paths = PATH.split(os.pathsep)
 commands = {"exit", "echo", "type", "pwd", "cd"}
 
-def echo(*args):
-    print(*args)
+def echo(args):
+    sys.stdout.write(f"{" ".join(args)}\n")
+    sys.stdout.flush()
 
 def type(command):
     command_path = None
@@ -28,14 +30,14 @@ def main():
         sys.stdout.flush()
         # readline() here ends with a newline character, necessitating rstrip()
         cmd = sys.stdin.readline().rstrip()
-        # split input into distinct arguments
-        args = cmd.split()
+        # split input into distinct arguments using shlex
+        args = shlex.split(cmd)
         match args:
             # the exit command defaults to a 0 code
             case ["exit", "0"]:
                 sys.exit(int(args[1]) if len(args) > 1 else 0)
             case ["echo", *pos_args]:
-                echo(*pos_args)
+                echo(pos_args)
             case ["type", command]:
                 type(command)
             case ["pwd"]:
