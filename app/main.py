@@ -43,7 +43,7 @@ def main():
                 sys.stdout.flush()
             case ["cd", path]:
                 try:
-                    os.chdir(os.expanduser(path))
+                    os.chdir(os.path.expanduser(path))
                 except FileNotFoundError:
                     sys.stdout.write(f"cd: {path}: No such file or directory\n")
                     sys.stdout.flush()
