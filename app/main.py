@@ -21,8 +21,7 @@ def type(command):
     elif command_path:
         sys.stdout.write(f"{command} is {command_path}\n")
     else:
-        sys.stdout.write(f"{command}: not found\n", 
-                         file=sys.stderr)
+        sys.stderr.write(f"{command}: not found\n")
     sys.stdout.flush()
 
 def main():
@@ -46,7 +45,7 @@ def main():
                 args = args[:-2]  # Remove the redirection part from args
             except Exception as e:
                 sys.stdout = original_stdout  # Restore original stdout
-                sys.stdout.write(f"Error: {e}\n")
+                sys.stderr.write(f"Error: {e}\n")
                 sys.stdout.flush()
                 continue
         try:
@@ -65,8 +64,7 @@ def main():
                     try:
                         os.chdir(os.path.expanduser(path))
                     except FileNotFoundError:
-                        sys.stdout.write(f"cd: {path}: No such file or directory\n", 
-                                         file=sys.stderr)
+                        sys.stderr.write(f"cd: {path}: No such file or directory\n")
                         sys.stdout.flush()
                 case _:
                     paths = PATH.split(os.pathsep)
@@ -77,8 +75,7 @@ def main():
                     if command_path:
                         subprocess.run(args, stdout=sys.stdout, stderr=sys.stderr)  # Use redirected stdout
                     else:
-                        sys.stdout.write(f"{args[0]}: not found\n", 
-                                         file=sys.stderr)
+                        sys.stderr.write(f"{args[0]}: not found\n")
                     sys.stdout.flush()
         finally:
             if sys.stdout != original_stdout:
