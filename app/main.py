@@ -36,33 +36,36 @@ def main():
         args = shlex.split(cmd)
         original_stdout = sys.stdout  # Save the original stdout
         original_stderr = sys.stderr  # Save the original stderr
-        if len(args) > 2 and args[-2] == "2>>":
-            try:
-                sys.stderr = open(args[-1], "a")  # Redirect stderr to file
-                args = args[:-2]  # Remove the redirection part from args
-            except Exception as e:
-                sys.stderr = original_stderr
-        elif len(args) > 2 and (args[-2] == "1>>" or args[-2] == ">>"):
-            try:
-                sys.stdout = open(args[-1], "a")  # Redirect stdout to file
-                args = args[:-2]  # Remove the redirection part from args
-            except Exception as e:
-                sys.stdout = original_stdout
-        elif len(args) > 2 and args[-2] == "2>":
-            try:
-                sys.stderr = open(args[-1], "w")  # Redirect stderr to file
-                args = args[:-2]  # Remove the redirection part from args
-            except Exception as e:
-                sys.stderr = original_stderr
-        elif len(args) > 2 and (args[-2] == "1>" or args[-2] == ">"):
-            try:
-                sys.stdout = open(args[-1], "w")  # Redirect stdout to file
-                args = args[:-2]  # Remove the redirection part from args
-            except Exception as e:
-                sys.stdout = original_stdout  # Restore original stdout
-                sys.stderr.write(f"Error: {e}\n")
-                sys.stdout.flush()
-                continue
+        
+        match args[-2:] if len(args) > 2 else []:
+            case ["2>>", file]:
+                try:
+                    sys.stderr = open(file, "a")  # Redirect stderr to file
+                    args = args[:-2]  # Remove the redirection part from args
+                except Exception as e:
+                    sys.stderr = original_stderr
+            case ["1>>", file] | [">>", file]:
+                try:
+                    sys.stdout = open(file, "a")  # Redirect stdout to file
+                    args = args[:-2]  # Remove the redirection part from args
+                except Exception as e:
+                    sys.stdout = original_stdout
+            case ["2>", file]:
+                try:
+                    sys.stderr = open(file, "w")  # Redirect stderr to file
+                    args = args[:-2]  # Remove the redirection part from args
+                except Exception as e:
+                    sys.stderr = original_stderr
+            case ["1>", file] | [">", file]:
+                try:
+                    sys.stdout = open(file, "w")  # Redirect stdout to file
+                    args = args[:-2]  # Remove the redirection part from args
+                except Exception as e:
+                    sys.stdout = original_stdout  # Restore original stdout
+                    sys.stderr.write(f"Error: {e}\n")
+                    sys.stdout.flush()
+                    continue
+
         try:
             match args:
                 # the exit command defaults to a 0 code
