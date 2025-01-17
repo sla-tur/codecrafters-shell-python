@@ -4,6 +4,8 @@ import shlex
 import subprocess
 
 PATH = os.environ.get("PATH")
+# os.pathsep contains the system-specific PATH separator
+# (: on Unix, ; on Windows)
 paths = PATH.split(os.pathsep)
 commands = {"exit", "echo", "type", "pwd", "cd"}
 
