@@ -35,12 +35,13 @@ def main():
         # split input into distinct arguments using shlex
         args = shlex.split(cmd)
         original_stdout = sys.stdout  # Save the original stdout
+        original_stderr = sys.stderr  # Save the original stderr
         if len(args) > 2 and args[-2] == "2>>":
             try:
                 sys.stderr = open(args[-1], "a")  # Redirect stderr to file
                 args = args[:-2]  # Remove the redirection part from args
             except Exception as e:
-                sys.stderr = original_stdout
+                sys.stderr = original_stderr
         elif len(args) > 2 and (args[-2] == "1>>" or args[-2] == ">>"):
             try:
                 sys.stdout = open(args[-1], "a")  # Redirect stdout to file
@@ -52,7 +53,7 @@ def main():
                 sys.stderr = open(args[-1], "w")  # Redirect stderr to file
                 args = args[:-2]  # Remove the redirection part from args
             except Exception as e:
-                sys.stderr = original_stdout
+                sys.stderr = original_stderr
         elif len(args) > 2 and (args[-2] == "1>" or args[-2] == ">"):
             try:
                 sys.stdout = open(args[-1], "w")  # Redirect stdout to file
@@ -87,7 +88,7 @@ def main():
                         if os.path.isfile(f"{path}/{args[0]}"):
                             command_path = f"{path}/{args[0]}"
                     if command_path:
-                        subprocess.run(args, stdout=sys.stdout, stderr=sys.stderr)  # Use redirected stdout
+                        subprocess.run(args, stdout=sys.stdout, stderr=sys.stderr)  # Use redirected stdout and stderr
                     else:
                         sys.stderr.write(f"{args[0]}: not found\n")
                     sys.stdout.flush()
@@ -95,6 +96,9 @@ def main():
             if sys.stdout != original_stdout:
                 sys.stdout.close()  # Close the file if stdout was redirected
             sys.stdout = original_stdout  # Restore original stdout
+            if sys.stderr != original_stderr:
+                sys.stderr.close()  # Close the file if stderr was redirected
+            sys.stderr = original_stderr  # Restore original stderr
 
 if __name__ == "__main__":
     main()
