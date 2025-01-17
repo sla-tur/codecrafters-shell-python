@@ -35,7 +35,13 @@ def main():
         # split input into distinct arguments using shlex
         args = shlex.split(cmd)
         original_stdout = sys.stdout  # Save the original stdout
-        if len(args) > 2 and args[-2].endswith(">>"):
+        if len(args) > 2 and args[-2] == "2>>":
+            try:
+                sys.stderr = open(args[-1], "a")  # Redirect stderr to file
+                args = args[:-2]  # Remove the redirection part from args
+            except Exception as e:
+                sys.stderr = original_stdout
+        elif len(args) > 2 and (args[-2] == "1>>" or args[-2] == ">>"):
             try:
                 sys.stdout = open(args[-1], "a")  # Redirect stdout to file
                 args = args[:-2]  # Remove the redirection part from args
