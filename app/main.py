@@ -2,6 +2,7 @@ import sys
 import os
 import shlex
 import subprocess
+import readline  # Add readline for autocompletion
 
 PATH = os.environ.get("PATH")
 # os.pathsep contains the system-specific PATH separator
@@ -25,6 +26,19 @@ def type(command):
     else:
         sys.stderr.write(f"{command}: not found\n")
     sys.stdout.flush()
+
+def completer(text, state):
+    # builtins
+    options = [cmd for cmd in commands if cmd.startswith(text)]
+    # executables in PATH
+    options.extend([f for f in os.listdir('.') if f.startswith(text)])
+    if state < len(options):
+        return options[state]
+    else:
+        return None
+
+readline.set_completer(completer)
+readline.parse_and_bind("tab: complete")
 
 def main():
     while True:
