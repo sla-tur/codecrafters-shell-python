@@ -2,7 +2,8 @@ import sys
 import os
 import shlex
 import subprocess
-import readline  # Add readline for autocompletion
+# readline is the Python interface to the GNU readline library
+import readline
 
 PATH = os.environ.get("PATH")
 # os.pathsep contains the system-specific PATH separator
@@ -36,6 +37,9 @@ def completer(text, state):
     if state < len(options):
         return options[state]
     else:
+        if state == 0:
+            sys.stdout.write('\a')  # Emit bell noise
+            sys.stdout.flush()
         return None
 
 readline.set_completer(completer)
