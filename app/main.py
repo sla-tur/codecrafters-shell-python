@@ -32,6 +32,7 @@ def completer(text, state):
     options = [cmd for cmd in commands if cmd.startswith(text)]
     # executables in PATH
     options.extend([f for f in os.listdir('.') if f.startswith(text)])
+    options = sorted(options)
     if state < len(options):
         return options[state]
     else:
@@ -44,8 +45,8 @@ def main():
     while True:
         sys.stdout.write("$ ")
         sys.stdout.flush()
-        # readline() here ends with a newline character, necessitating rstrip()
-        cmd = sys.stdin.readline().rstrip()
+        # original command does not have trailing newline
+        cmd = input().rstrip()
         # split input into distinct arguments using shlex
         args = shlex.split(cmd)
         original_stdout = sys.stdout  # Save the original stdout
