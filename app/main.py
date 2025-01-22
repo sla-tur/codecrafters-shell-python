@@ -29,9 +29,9 @@ def type(command):
 
 def completer(text, state):
     # builtins
-    options = [cmd for cmd in commands if cmd.startswith(text)]
+    options = [cmd + ' ' for cmd in commands if cmd.startswith(text)]
     # executables in PATH
-    options.extend([f for f in os.listdir('.') if f.startswith(text)])
+    options.extend([f + ' ' for f in os.listdir('.') if f.startswith(text)])
     options = sorted(options)
     if state < len(options):
         return options[state]
